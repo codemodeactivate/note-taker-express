@@ -1,5 +1,4 @@
-const express = require('express');
-const notesAPI = express.Router();
+const router = require('express').Router();
 const fs = require('fs');
 // bodyParser parses incoming requests
 const bodyParser = require('body-parser');
@@ -8,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 
 
 //creating get api /api/notes to read db.json and return all saved notes as JSON
-notesAPI.get('/api/notes', (req, res) => {
+router.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if (err) throw err;
             const notes = JSON.parse(data);
@@ -17,11 +16,10 @@ notesAPI.get('/api/notes', (req, res) => {
 });
 
 
-notesAPI.use(bodyParser.urlencoded({ extended: false }));
-notesAPI.use(bodyParser.json());
 
 
-notesAPI.post('/api/notes', (req, res) => {
+
+router.post('/api/notes', (req, res) => {
     //get new note from request body & destructure
     const { title, text } = req.body;
     //generate Unique ID using uuidv4
@@ -44,4 +42,4 @@ notesAPI.post('/api/notes', (req, res) => {
 
 });
 
-module.exports = notesAPI;
+module.exports = router;
