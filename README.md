@@ -16,7 +16,7 @@ Using Node.js and Express.js this note taker app will store notes locally in a j
 
 ![Note Taker Demo Gif](./Assets/demogif.gif)
   ## Demo
-  Here is a live link to the deployed application on Heroku:
+  Here is a live link to the deployed application on Heroku: [Note Taker Express](https://note-taker-codemodeactivate.herokuapp.com/)
   ## Usage
   Use it however you'd like! Preferably to take notes.
   ## Contribute
