@@ -49,5 +49,24 @@ router.get('/api/notes', (req, res) => {
     });
   });
 
+  router.delete('/api/notes/:id', (req, res) => {
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Server error' });
+        }
+        let notes = JSON.parse(data);
+        notes = notes.filter((note) => note.id !== req.params.id);
+        fs.writeFile('./db/db.json', JSON.stringify(notes), 'utf8', (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Server error' });
+            }
+            res.json({ message: 'Note deleted successfully' });
+        });
+    });
+});
+
+
 
 module.exports = router;
