@@ -23,11 +23,7 @@ router.get('/api/notes', (req, res) => {
   });
 
 
-
-
-
-
-
+//post notes by deconstructing json and then reading the db.json file and adding the new note to the array and then writing the new array to the db.json file
   router.post('/api/notes', (req, res) => {
     const { title, text } = req.body;
     const id = uuidv4();
@@ -49,6 +45,8 @@ router.get('/api/notes', (req, res) => {
     });
   });
 
+
+  //delete notes by reading the db.json file and then filtering out the note with the id that matches the id of the note to be deleted and then writing the new array to the db.json file
   router.delete('/api/notes/:id', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if (err) {
