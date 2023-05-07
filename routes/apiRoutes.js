@@ -3,43 +3,51 @@ const fs = require('fs');
 // bodyParser parses incoming requests
 const bodyParser = require('body-parser');
 // uuid creates unique ids
+const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
 
 //creating get api /api/notes to read db.json and return all saved notes as JSON
 router.get('/api/notes', (req, res) => {
-    fs.readFile('./db/db.json', 'utf8', (err, data) => {
-        if (err) throw err;
-            const notes = JSON.parse(data);
-            res.json(notes);
-    })
-});
+    // read the contents of the db.json file
+    fs.readFile(path.join(__dirname, '../db/db.json'), 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Failed to read data from file' });
+      }
+      // parse the contents of the file into an array of objects
+      const notes = JSON.parse(data);
+      // send the notes array as the response
+      res.json(notes);
+    });
+  });
+
+
 
 
 
 
 
 router.post('/api/notes', (req, res) => {
-    //get new note from request body & destructure
     const { title, text } = req.body;
-    //generate Unique ID using uuidv4
     const id = uuidv4();
-    //create new note object with title, text, and id
     const newNote = { id, title, text };
-    fs.readFile('./db/db.json', 'utf8', (err, data) => {
-        if (err) throw err;
+    const readStream = fs.createReadStream('./db/db.json', 'utf8');
+    let data = '';
+    readStream.on('data', (chunk) => {
+        data += chunk;
+    });
+    readStream.on('end', () => {
         const notes = JSON.parse(data);
         notes.push(newNote);
-        fs.writeFile('./db/db.json', JSON.stringify(notes), (err) => {
-            if (err) throw err;
+        const writeStream = fs.createWriteStream('./db/db.json', 'utf8');
+        writeStream.write(JSON.stringify(notes));
+        writeStream.end();
+        writeStream.on('finish', () => {
             res.json(newNote);
         });
     });
-
-
-
-
-
 });
+
 
 module.exports = router;

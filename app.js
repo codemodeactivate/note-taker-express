@@ -1,24 +1,29 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const notesAPI = require('./routes/apiRoutes');
-const notesRouter = require('./routes/htmlRoutes');
-
-const PORT = process.env.PORT || 3001;
-
 const app = express();
+const PORT = process.env.PORT || 3001;
+const htmlRoutes = require('./routes/htmlRoutes');
+const apiRoutes = require('./routes/apiRoutes');
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+// Middleware for parsing JSON and urlencoded form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static assets from the public folder
 app.use(express.static('public'));
-app.use(notesRouter);
-app.use(notesAPI);
+
+// Require the htmlroutes and apiroutes files and use them as middleware
+
+app.use('/', htmlRoutes);
+app.use('/', apiRoutes);
 
 
-
-app.listen(PORT, () =>
-  console.log(`App listening at http://localhost:${PORT} 🚀`)
+// exporting index router to return index.html when no matching route is found
+app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '../public/index.html'))
 );
 
+// Start the server
+app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
 
 
