@@ -28,26 +28,26 @@ router.get('/api/notes', (req, res) => {
 
 
 
-router.post('/api/notes', (req, res) => {
+  router.post('/api/notes', (req, res) => {
     const { title, text } = req.body;
     const id = uuidv4();
     const newNote = { id, title, text };
-    const readStream = fs.createReadStream('./db/db.json', 'utf8');
-    let data = '';
-    readStream.on('data', (chunk) => {
-        data += chunk;
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Server error' });
+      }
+      const notes = JSON.parse(data);
+      notes.push(newNote);
+      fs.writeFile('./db/db.json', JSON.stringify(notes), 'utf8', (err) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ message: 'Server error' });
+        }
+        res.json(newNote);
+      });
     });
-    readStream.on('end', () => {
-        const notes = JSON.parse(data);
-        notes.push(newNote);
-        const writeStream = fs.createWriteStream('./db/db.json', 'utf8');
-        writeStream.write(JSON.stringify(notes));
-        writeStream.end();
-        writeStream.on('finish', () => {
-            res.json(newNote);
-        });
-    });
-});
+  });
 
 
 module.exports = router;

@@ -17,7 +17,7 @@ app.use('/', htmlRoutes);
 app.use('/', apiRoutes);
 
 
-// exporting index router to return index.html when no matching route is found
+//index router at the end of everything so it doesn't override any other pages. this lesson took a long time.
 app.get('*', (req, res) =>
     res.sendFile(path.join(__dirname, '../public/index.html'))
 );
